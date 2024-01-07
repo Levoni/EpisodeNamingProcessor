@@ -19,6 +19,7 @@
         <TextBox HorizontalAlignment="Left" x:Name="txtBoxSeason" Margin="67,191,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="45" Height="18" InputScope="DateMonth"/>
         <Label Content="Season:" HorizontalAlignment="Left" Margin="12,186,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" x:Name="txtboxEpisodes" Margin="409,30,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="400" Height="195"/>
+        <CheckBox Content="Use Regex" x:Name="ckboxUseRegex" HorizontalAlignment="Left" Margin="256,192,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.463,-1.152"/>
 
     </Grid>
 </Window>

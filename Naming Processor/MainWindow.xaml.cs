@@ -63,18 +63,19 @@ namespace Naming_Processor
          PBFiles.Value = 0;
          var DestinationPath = destinationDirectory.Content.ToString();
          var SourcePath = sourceDirectory.Content.ToString();
+         var isRegex = ckboxUseRegex.IsChecked.Value;
          GlobalInfoList = null;
          btnExecute.IsEnabled = false;
 
          if (isInt)
          {
-             await Task.Run(() => Process(season, DestinationPath, SourcePath));
+             await Task.Run(() => Process(season, DestinationPath, SourcePath,isRegex));
             btnExecute.IsEnabled = true;
             btnRevert.IsEnabled = true;
          }
       }
       
-      private async Task Process(int season, string destinationDirectory, string sourceDirectory)
+      private async Task Process(int season, string destinationDirectory, string sourceDirectory, bool isRegex)
       {
          //setup variables
          List<FileChangeInfo> infoList = new List<FileChangeInfo>();
@@ -89,21 +90,28 @@ namespace Naming_Processor
          var showName = DestinationPathArray.Last();
          var fileList = Directory.GetFiles(sourceDirectory).OrderBy(x => x);
 
+         var episodeNum = 0;
          //Create Ordered Episode Info
          foreach (var file in fileList)
          {
-            var episodeSubstring = Regex.Match(file, @"E[\d]{3}|E[\d]{2}");
-            var regexEpisode = episodeSubstring.Value.Substring(1);
+            episodeNum++;
             var ext = file.Split('.').Last();
             string newFilePath = $"{destinationDirectory}{System.IO.Path.DirectorySeparatorChar + fullSeasonString + System.IO.Path.DirectorySeparatorChar}";
-            string newFileName = $"{showName} - S{seasonString}E{regexEpisode.ToString().PadLeft(2, '0')}.{ext}";
+            string newFileName = string.Empty;
+
+            if (isRegex)
+            {
+               var episodeSubstring = Regex.Match(file, @"E[\d]{3}|E[\d]{2}|E[\d]{1}");
+               episodeNum = int.Parse(episodeSubstring.Value.Substring(1));  
+            }
+            newFileName = $"{showName} - S{seasonString}E{episodeNum.ToString().PadLeft(2, '0')}.{ext}";
 
             episodeInfos.Add(new EpisodeInfo()
             {
                oldFilePath = file,
                newFilePath = newFilePath + newFileName,
                seasonNum = season,
-               episodeNum = int.Parse(regexEpisode)
+               episodeNum = episodeNum
             });
          }
          episodeInfos = episodeInfos.OrderBy(x => x.episodeNum).ToList();
